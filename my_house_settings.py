@@ -14,32 +14,34 @@ cam3 = '301' # For my system the first digit refers to the camera and the 01 bei
 dialog = [] # Put links to a host for a recorded mp3, I used dropbox for mine
 
 # Testing google home mini
-kitchen_google = '' # In the string enter your local IP address for your google for sound from
+voice_google = '' # In the string enter your local IP address for your google for sound from
 
 # Default heating timer settings, these are defaults for when the GUI starts
 morningTimer = '07:00:00' # Set them in here or when the GUI is running you can change them
 bedtimeTimer = '23:00:00'
+#################################################################
+# Set the default initial temp settings in here
 
 # ZONES
-# ZONE DEFAULT OPTIONS: 0 = off, 1 = auto, 2 = on (This sets the GUI for how it works
+# ZONE DEFAULT OPTIONS: 0 = off, 1 = auto, 2 = on (This sets the GUI for how it works)
 z1BtnsList = ['z1_off_btn.png', 'z1_auto_btn.png', 'z1_on_btn.png']
 z1Default = 1
-z1Timer = 20
+z1Timer = 20 # Seconds
 z1Trig = 'z1_trig_btn.png'
 
 z2BtnsList = ['z2_off_btn.png', 'z2_auto_btn.png', 'z2_on_btn.png']
 z2Default = 1
-z2Timer = 15
+z2Timer = 15 # Seconds
 z2Trig = 'z2_trig_btn.png'
 
 z3BtnsList = ['z3_off_btn.png', 'z3_auto_btn.png', 'z3_on_btn.png']
 z3Default = 1
-z3Timer = 10
+z3Timer = 10 # Seconds
 z3Trig = 'z3_trig_btn.png'
 
 z4BtnsList = ['z4_off_btn.png', 'z4_auto_btn.png', 'z4_on_btn.png']
 z4Default = 1
-z4Timer = 5
+z4Timer = 5 # Seconds
 z4Trig = 'z4_trig_btn.png'
 
 
@@ -47,14 +49,14 @@ z4Trig = 'z4_trig_btn.png'
 # DEFAULT OPTIONS: 0 = off, 1 = on
 # Ext voice buttons list
 extVoiceBtnsList = ['ext_voice_off_btn.png', 'ext_voice_on_btn.png']
-extVoiceDefault = 1
+extVoiceDefault = 0
 
 # Doors voice buttons list
 doorsBtnsList = ['doors_voice_off_btn.png', 'doors_voice_on_btn.png']
-doorsDefault = 1
+doorsDefault = 0
 
-# Modes buttons list
-modesBtnsList = ['bbq_grey_btn.png', 'bbq_green_btn.png']
+# Modes buttons list ####################################### Sort to cctvBtnsList
+modesBtnsList = ['bbq_grey_btn.png', 'bbq_green_btn.png'] # Set to correct cctv images
 modesDefault = 0
 
 # Decking buttons list
