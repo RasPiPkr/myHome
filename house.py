@@ -10,9 +10,6 @@ import glob
 import io
 
 
-############################################ Put GPIO pins used into the settings
-relayPins = [18, 23, 24, 22, 6, 13, 19, 26]
-pirPins = [21, 20, 16, 12]
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 for i in range(len(relayPins)):
@@ -26,7 +23,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')
 root = tk.Tk()
 root.geometry('800x480')
-root.attributes('-fullscreen', True)
+##root.attributes('-fullscreen', True)
 root.config(bg='black', cursor='none')
 timeFont = ('digits', 165)
 setFont = ('digits', 192)
@@ -38,22 +35,13 @@ currTime = tk.StringVar()
 currDate = tk.StringVar()
 temp1Sensor = tk.StringVar()
 temp2Sensor = tk.StringVar()
-############################# Sort so it gets from the settings.py
-setTempVar = tk.StringVar() # Use the value=
-setTempVar.set('20.0')
-mHrsVar = tk.StringVar()
-mDefaultHrs = '07'
-mMinsVar = tk.StringVar()
-mDefaultMins = '00'
-mTempVar = tk.StringVar()
-mDefaultTemp = '20.0'
-bHrsVar = tk.StringVar()
-bDefaultHrs = '23'
-bMinsVar = tk.StringVar()
-bDefaultMins = '00'
-bTempVar = tk.StringVar()
-bDefaultTemp = '19.0'
-#############################
+setTempVar = tk.StringVar(value=defaultTemp)
+mHrsVar = tk.StringVar(value=morningTimer[:2])
+mMinsVar = tk.StringVar(value=morningTimer[3:5])
+mTempVar = tk.StringVar(value=morningTimerTemp)
+bHrsVar = tk.StringVar(value=bedtimeTimer[:2])
+bMinsVar = tk.StringVar(value=bedtimeTimer[3:5])
+bTempVar = tk.StringVar(value=bedtimeTimerTemp)
 pHrs = [str(i).zfill(2) for i in range(24)]
 pMins = [str(i).zfill(2) for i in range(60)]
 t = [str('{:.1f}'.format(i)) for i in range(16, 23)]
@@ -114,7 +102,8 @@ def pir1Thread():
         time.sleep(0.2)
         if z1Default == 1:
             if GPIO.input(21) == False:
-                grabImg(cam1)
+                if cctvDefault== 1:
+                    grabImg(cam1)
                 if extVoiceDefault == 1:
                     voiceList.append(dialog[2])
                 dispImg()
@@ -149,7 +138,8 @@ def pir2Thread():
         time.sleep(0.2)
         if z2Default == 1:
             if GPIO.input(20) == False:
-                grabImg(cam2)
+                if cctvDefault == 1:
+                    grabImg(cam2)
                 if extVoiceDefault == 1:
                     voiceList.append(dialog[3])
                 dispImg()
@@ -183,7 +173,8 @@ def pir3Thread():
         time.sleep(0.2)
         if z3Default == 1:
             if GPIO.input(16) == False:
-                grabImg(cam3)
+                if cctvDefault == 1:
+                    grabImg(cam3)
                 if extVoiceDefault == 1:
                     voiceList.append(dialog[4])
                 dispImg()
@@ -365,9 +356,9 @@ def security_menu():
                           activebackground='black', command=dVoiceChange)
     dVoiceBtn.grid(row=1, column=0, sticky='s')
 
-    modesImg = tk.PhotoImage(file='cctv_on_btn.png')#modesBtnsList[modesDefault]) Sort so gets img from settings
+    modesImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
     modesBtn = tk.Button(dispFrame, image=modesImg, bg='black', bd=0, highlightthickness=0,
-                         activebackground='black')#, command=lambda: grabImg('301')) Sort to change the button img not grabImg
+                         activebackground='black', command=cctvChange)
     modesBtn.grid(row=0, column=1, padx=6, sticky='s')
 
     deckImg = tk.PhotoImage(file=deckingBtnsList[deckingDefault])
@@ -499,15 +490,15 @@ def dVoiceChange():
     dVoiceImg = tk.PhotoImage(file=doorsBtnsList[doorsDefault])
     dVoiceBtn.config(image=dVoiceImg)
 
-def modesChange():
-    global modesDefault, modesImg, modesBtn
+def cctvChange():
+    global cctvDefault, cctvImg, cctvBtn
     global lastTouch
     lastTouch = int(time.time())
-    modesDefault += 1
-    if modesDefault == len(modesBtnsList):
-        modesDefault = 0
-    modesImg = tk.PhotoImage(file=modesBtnsList[modesDefault])
-    modesBtn.config(image=modesImg)
+    cctvDefault += 1
+    if cctvDefault == len(cctvBtnsList):
+        cctvDefault = 0
+    cctvImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
+    cctvBtn.config(image=cctvImg)
 
 def deckChange():
     global deckingDefault, deckImg, deckBtn
@@ -585,15 +576,12 @@ def prog_menu():
 
     mHrsBox = tk.Spinbox(mFrame, textvariable=mHrsVar, values=pHrs, font=digitFont, width=2)
     mHrsBox.pack(side='left')
-    mHrsVar.set(mDefaultHrs)
     tk.Label(mFrame, text=':', font=digitFont).pack(side='left')
     mMinsBox = tk.Spinbox(mFrame, textvariable=mMinsVar, values=pMins, font=digitFont, width=2)
     mMinsBox.pack(side='left')
-    mMinsVar.set(mDefaultMins)
     tk.Label(mFrame, text='', bg='black', width=20).pack(side='left')
     mTempBox = tk.Spinbox(mFrame, textvariable=mTempVar, values=pTemp, font=digitFont, width=4)
     mTempBox.pack(side='left')
-    mTempVar.set(mDefaultTemp)
 
     bedtimeImg = tk.PhotoImage(file='bedtime.png')
     bedtimeLabel = tk.Label(dispFrame, image=bedtimeImg, bg='black')
@@ -607,15 +595,12 @@ def prog_menu():
 
     bHrsBox = tk.Spinbox(bFrame, textvariable=bHrsVar, values=pHrs, font=digitFont, width=2)
     bHrsBox.pack(side='left')
-    bHrsVar.set(bDefaultHrs)
     tk.Label(bFrame, text=':', font=digitFont).pack(side='left')
     bMinsBox = tk.Spinbox(bFrame, textvariable=bMinsVar, values=pMins, font=digitFont, width=2)
     bMinsBox.pack(side='left')
-    bMinsVar.set(bDefaultMins)
     tk.Label(bFrame, text='', bg='black', width=20).pack(side='left')
     bTempBox = tk.Spinbox(bFrame, textvariable=bTempVar, values=pTemp, font=digitFont, width=4)
     bTempBox.pack(side='left')
-    bTempVar.set(bDefaultTemp)
     
 def grabImg(cam):
     capture = requests.get('http://{}:{}@{}:{}/ISAPI/Streaming/channels/{}/picture?videoResolutionWidth=1920&videoResolutionHeight=1080'.format(user, passwd, camIP, httpPort, cam))
