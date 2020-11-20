@@ -23,7 +23,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')
 root = tk.Tk()
 root.geometry('800x480')
-##root.attributes('-fullscreen', True)
+root.attributes('-fullscreen', True)
 root.config(bg='black', cursor='none')
 timeFont = ('digits', 165)
 setFont = ('digits', 192)
@@ -36,12 +36,18 @@ currDate = tk.StringVar()
 temp1Sensor = tk.StringVar()
 temp2Sensor = tk.StringVar()
 setTempVar = tk.StringVar(value=defaultTemp)
-mHrsVar = tk.StringVar(value=morningTimer[:2])
-mMinsVar = tk.StringVar(value=morningTimer[3:5])
-mTempVar = tk.StringVar(value=morningTimerTemp)
-bHrsVar = tk.StringVar(value=bedtimeTimer[:2])
-bMinsVar = tk.StringVar(value=bedtimeTimer[3:5])
-bTempVar = tk.StringVar(value=bedtimeTimerTemp)
+mHrsVar = tk.StringVar()
+mDefaultHrs = morningTimer[:2]
+mMinsVar = tk.StringVar()
+mDefaultMins = morningTimer[3:5]
+mTempVar = tk.StringVar()
+mDefaultTemp = morningTimerTemp
+bHrsVar = tk.StringVar()
+bDefaultHrs = bedtimeTimer[:2]
+bMinsVar = tk.StringVar()
+bDefaultMins = bedtimeTimer[3:5]
+bTempVar = tk.StringVar()
+bDefaultTemp = bedtimeTimerTemp
 pHrs = [str(i).zfill(2) for i in range(24)]
 pMins = [str(i).zfill(2) for i in range(60)]
 t = [str('{:.1f}'.format(i)) for i in range(16, 23)]
@@ -56,6 +62,7 @@ def read_temp_raw(device_file):
     lines = f.readlines()
     f.close()
     return lines
+
 
 def test1Run(device_file):
     global heatingDelay
@@ -73,6 +80,7 @@ def test1Run(device_file):
         except:
             temp1Sensor.set('N/A')
 
+
 def test2Run(device_file):
     while True:
         try:
@@ -81,6 +89,7 @@ def test2Run(device_file):
             time.sleep(30)
         except:
             temp2Sensor.set('N/A')
+
 
 def voice():
     device = pychromecast.Chromecast(voice_google)
@@ -94,6 +103,7 @@ def voice():
             time.sleep(3)
             voiceList.pop(0)
         time.sleep(0.5)
+
 
 def pir1Thread():
     global z1PreTrig, extVoiceDefault,voiceList
@@ -129,7 +139,7 @@ def pir1Thread():
                         pass
             else:
                 GPIO.output(6, GPIO.HIGH)
-                
+
 
 def pir2Thread():
     global z2PreTrig, extVoiceDefault, voiceList
@@ -166,6 +176,7 @@ def pir2Thread():
             else:
                 GPIO.output(13, GPIO.HIGH)
 
+
 def pir3Thread():
     global z3PreTrig, extVoiceDefault, voiceList
     while True:
@@ -201,6 +212,7 @@ def pir3Thread():
             else:
                 GPIO.output(19, GPIO.HIGH)
 
+
 def pir4Thread():
     global z4PreTrig
     while True:
@@ -231,6 +243,7 @@ def pir4Thread():
             else:
                 GPIO.output(26, GPIO.HIGH)
 
+
 def read_temp(device_file):
     lines = read_temp_raw(device_file)
     while lines[0].strip()[-3:] != 'YES':
@@ -242,6 +255,7 @@ def read_temp(device_file):
         temp_c = float(temp_string) / 1000.0
         temp_f = temp_c * 9.0 / 5.0 + 32.0
         return temp_c, temp_f
+
 
 def showTime():
     global timerSecs, getTemp, timeNow, lastTouch, menuScreen, morningTimer, bedtimeTimer
@@ -259,6 +273,7 @@ def showTime():
         setTempVar.set('19.0')
     root.after(1000, showTime)
 
+
 def screenSaver():
     global dispFrame, menuScreen, secMenu
     dispFrame.destroy()
@@ -270,6 +285,7 @@ def screenSaver():
     bigBtn = tk.Button(dispFrame, textvariable=currTime, font=timeFont, bd=0, highlightthickness=0, 
                        relief='flat', bg='black', fg='gray', activebackground='grey', command=mainMenu)
     bigBtn.pack(ipadx=10, ipady=150)
+
 
 def heating_menu():
     global dispFrame, menuScreen, lastTouch, secMenu
@@ -294,13 +310,13 @@ def heating_menu():
     progBtn = tk.Button(dispFrame, image=progImg, bg='black', bd=0, highlightthickness=0, activebackground='black',
                         command=prog_menu)
     progBtn.grid(row=2, column=0, padx=10, pady=5)
-    
+
     upTemp = tk.Label(dispFrame, textvariable=temp1Sensor, fg='grey', bg='black', font=digitFont)
     upTemp.grid(row=0, column=1, columnspan=3)
-    
+
     setTemp = tk.Label(dispFrame, textvariable=setTempVar, fg='grey', bg='black', font=setFont)
     setTemp.grid(row=0, column=1, rowspan=3, columnspan=3)
-    
+
     dnTemp = tk.Label(dispFrame, textvariable=temp2Sensor, fg='grey', bg='black', font=digitFont)
     dnTemp.grid(row=2, column=1, columnspan=3)
 
@@ -314,6 +330,7 @@ def heating_menu():
                              activebackground='black', command=setTempDown)
     minusTempBtn.grid(row=1, column=4, rowspan=2, padx=10, pady=5, sticky='s')
 
+
 def setTempUp():
     global lastTouch, heatingDelay
     lastTouch = int(time.time())
@@ -321,6 +338,7 @@ def setTempUp():
     currVar = float(setTempVar.get())
     currVar = currVar + float(0.5)
     setTempVar.set(currVar)
+
 
 def setTempDown():
     global lastTouch, heatingDelay
@@ -330,10 +348,11 @@ def setTempDown():
     currVar = currVar - float(0.5)
     setTempVar.set(currVar)
 
+
 def security_menu():
     global dispFrame, menuScreen, lastTouch, secMenu
     global z1Img, z1Btn, z2Img, z2Btn, z3Img, z3Btn, z4Img, z4Btn, backImg
-    global eVoiceImg, eVoiceBtn, dVoiceImg, dVoiceBtn, modesImg, modesBtn, deckImg, deckBtn
+    global eVoiceImg, eVoiceBtn, dVoiceImg, dVoiceBtn, cctvImg, cctvBtn, deckImg, deckBtn
     dispFrame.destroy()
     dispFrame = tk.Frame(root, bg='black')
     dispFrame.pack(expand=True, fill='both')
@@ -356,10 +375,10 @@ def security_menu():
                           activebackground='black', command=dVoiceChange)
     dVoiceBtn.grid(row=1, column=0, sticky='s')
 
-    modesImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
-    modesBtn = tk.Button(dispFrame, image=modesImg, bg='black', bd=0, highlightthickness=0,
+    cctvImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
+    cctvBtn = tk.Button(dispFrame, image=cctvImg, bg='black', bd=0, highlightthickness=0,
                          activebackground='black', command=cctvChange)
-    modesBtn.grid(row=0, column=1, padx=6, sticky='s')
+    cctvBtn.grid(row=0, column=1, padx=6, sticky='s')
 
     deckImg = tk.PhotoImage(file=deckingBtnsList[deckingDefault])
     deckBtn = tk.Button(dispFrame, image=deckImg, bg='black', bd=0, highlightthickness=0,
@@ -406,6 +425,7 @@ def security_menu():
                       activebackground='black', command=z4Change)
     z4Btn.grid(row=1, column=3)
 
+
 def z1Change():
     global z1Default, z1Img, z1Btn
     global lastTouch
@@ -421,6 +441,7 @@ def z1Change():
         pass
     else:
         GPIO.output(6, GPIO.LOW)
+
 
 def z2Change():
     global z2Default, z2Img, z2Btn
@@ -438,6 +459,7 @@ def z2Change():
     else:
         GPIO.output(13, GPIO.LOW)
 
+
 def z3Change():
     global z3Default, z3Img, z3Btn
     global lastTouch
@@ -453,6 +475,7 @@ def z3Change():
         pass
     else:
         GPIO.output(19, GPIO.LOW)
+
 
 def z4Change():
     global z4Default, z4Img, z4Btn
@@ -470,6 +493,7 @@ def z4Change():
     else:
         GPIO.output(26, GPIO.LOW)
 
+
 def eVoiceChange():
     global extVoiceDefault, eVoiceImg, eVoiceBtn
     global lastTouch
@@ -479,6 +503,7 @@ def eVoiceChange():
         extVoiceDefault = 0
     eVoiceImg = tk.PhotoImage(file=extVoiceBtnsList[extVoiceDefault])
     eVoiceBtn.config(image=eVoiceImg)
+
 
 def dVoiceChange():
     global doorsDefault, dVoiceImg, dVoiceBtn
@@ -490,6 +515,7 @@ def dVoiceChange():
     dVoiceImg = tk.PhotoImage(file=doorsBtnsList[doorsDefault])
     dVoiceBtn.config(image=dVoiceImg)
 
+
 def cctvChange():
     global cctvDefault, cctvImg, cctvBtn
     global lastTouch
@@ -499,6 +525,7 @@ def cctvChange():
         cctvDefault = 0
     cctvImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
     cctvBtn.config(image=cctvImg)
+
 
 def deckChange():
     global deckingDefault, deckImg, deckBtn
@@ -514,7 +541,8 @@ def deckChange():
     else:
         GPIO.output(23, GPIO.LOW)
 
-def mainMenu():    
+
+def mainMenu():
     global dispFrame, menuScreen, lastTouch, htgImg, secImg
     dispFrame.destroy()
     dispFrame = tk.Frame(root, bg='black')
@@ -534,6 +562,7 @@ def mainMenu():
                        activebackground='black', command=security_menu)
     secBtn.grid(row=0, column=2, padx=15, pady=60)
 
+
 def get_prog_timer():
     global morningTimer, morningTemp, bedtimeTimer, bedtimeTemp
     global mDefaultHrs, mDefaultMins, mDefaultTemp, bDefaultHrs, bDefaultMins, bDefaultTemp
@@ -547,6 +576,7 @@ def get_prog_timer():
     bDefaultTemp = str(bTempVar.get())
     heating_menu()
 
+
 def prog_menu():
     global dispFrame, menuScreen, lastTouch, secMenu
     global backImg, morningImg, bedtimeImg
@@ -556,7 +586,7 @@ def prog_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = False
-    
+
     backImg = tk.PhotoImage(file='back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=get_prog_timer)
@@ -576,12 +606,15 @@ def prog_menu():
 
     mHrsBox = tk.Spinbox(mFrame, textvariable=mHrsVar, values=pHrs, font=digitFont, width=2)
     mHrsBox.pack(side='left')
+    mHrsVar.set(mDefaultHrs)
     tk.Label(mFrame, text=':', font=digitFont).pack(side='left')
     mMinsBox = tk.Spinbox(mFrame, textvariable=mMinsVar, values=pMins, font=digitFont, width=2)
     mMinsBox.pack(side='left')
+    mMinsVar.set(mDefaultMins)
     tk.Label(mFrame, text='', bg='black', width=20).pack(side='left')
     mTempBox = tk.Spinbox(mFrame, textvariable=mTempVar, values=pTemp, font=digitFont, width=4)
     mTempBox.pack(side='left')
+    mTempVar.set(mDefaultTemp)
 
     bedtimeImg = tk.PhotoImage(file='bedtime.png')
     bedtimeLabel = tk.Label(dispFrame, image=bedtimeImg, bg='black')
@@ -595,20 +628,24 @@ def prog_menu():
 
     bHrsBox = tk.Spinbox(bFrame, textvariable=bHrsVar, values=pHrs, font=digitFont, width=2)
     bHrsBox.pack(side='left')
+    bHrsVar.set(bDefaultHrs)
     tk.Label(bFrame, text=':', font=digitFont).pack(side='left')
     bMinsBox = tk.Spinbox(bFrame, textvariable=bMinsVar, values=pMins, font=digitFont, width=2)
     bMinsBox.pack(side='left')
+    bMinsVar.set(bDefaultMins)
     tk.Label(bFrame, text='', bg='black', width=20).pack(side='left')
     bTempBox = tk.Spinbox(bFrame, textvariable=bTempVar, values=pTemp, font=digitFont, width=4)
     bTempBox.pack(side='left')
-    
+    bTempVar.set(bDefaultTemp)
+
+
 def grabImg(cam):
     capture = requests.get('http://{}:{}@{}:{}/ISAPI/Streaming/channels/{}/picture?videoResolutionWidth=1920&videoResolutionHeight=1080'.format(user, passwd, camIP, httpPort, cam))
     img = Image.open(io.BytesIO(capture.content))
     newImg = img.resize((800, 450))
     newImg.save('cctv.png')
 
-    
+
 def dispImg():
     global dispFrame, menuScreen, lastTouch, secMenu, cameraImg
     dispFrame.destroy()
@@ -620,6 +657,7 @@ def dispImg():
     cameraImg = tk.PhotoImage(file='cctv.png')
     cameraLabel = tk.Label(dispFrame, image=cameraImg)
     cameraLabel.pack(pady=15)
+
 
 u = threading.Thread(target=test1Run, args=(device_folder[0] + '/w1_slave',))
 u.start()
