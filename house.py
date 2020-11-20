@@ -23,7 +23,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')
 root = tk.Tk()
 root.geometry('800x480')
-root.attributes('-fullscreen', True)
+##root.attributes('-fullscreen', True)
 root.config(bg='black', cursor='none')
 timeFont = ('digits', 165)
 setFont = ('digits', 192)
