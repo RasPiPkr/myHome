@@ -655,7 +655,7 @@ def dispImg():
     lastTouch = int(time.time() + 90)
     secMenu = False
     cameraImg = tk.PhotoImage(file='cctv.png')
-    cameraLabel = tk.Button(dispFrame, image=cameraImg, command=mainMenu)
+    cameraLabel = tk.Button(dispFrame, image=cameraImg, bd=0, highlightthickness=0, command=mainMenu)
     cameraLabel.pack(pady=15)
 
 
