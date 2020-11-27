@@ -55,6 +55,7 @@ pTemp = []
 for i in t:
     pTemp.append(i)
     pTemp.append(i[:-1] + '5')
+dark = True
 
 
 def read_temp_raw(device_file):
@@ -121,7 +122,8 @@ def pir1Thread():
                     z1PreTrig = True
                     z1Img = tk.PhotoImage(file=z1Trig)
                     z1Btn.config(image=z1Img)
-                    GPIO.output(6, GPIO.LOW)
+                    if dark:
+                        GPIO.output(6, GPIO.LOW)
                     time.sleep(z1Timer)
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
@@ -130,7 +132,8 @@ def pir1Thread():
                         pass
                 else:
                     z1PreTrig = True
-                    GPIO.output(6, GPIO.LOW)
+                    if dark:
+                        GPIO.output(6, GPIO.LOW)
                     time.sleep(z1Timer)
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
@@ -157,7 +160,8 @@ def pir2Thread():
                     z2PreTrig = True
                     z2Img = tk.PhotoImage(file=z2Trig)
                     z2Btn.config(image=z2Img)
-                    GPIO.output(13, GPIO.LOW)
+                    if dark:
+                        GPIO.output(13, GPIO.LOW)
                     time.sleep(z2Timer)
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
@@ -166,7 +170,8 @@ def pir2Thread():
                         pass
                 else:
                     z2PreTrig = True
-                    GPIO.output(13, GPIO.LOW)
+                    if dark:
+                        GPIO.output(13, GPIO.LOW)
                     time.sleep(z2Timer)
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
@@ -193,7 +198,8 @@ def pir3Thread():
                     z3PreTrig = True
                     z3Img = tk.PhotoImage(file=z3Trig)
                     z3Btn.config(image=z3Img)
-                    GPIO.output(19, GPIO.LOW)
+                    if dark:
+                        GPIO.output(19, GPIO.LOW)
                     time.sleep(z3Timer)
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
@@ -202,7 +208,8 @@ def pir3Thread():
                         pass
                 else:
                     z3PreTrig = True
-                    GPIO.output(19, GPIO.LOW)
+                    if dark:
+                        GPIO.output(19, GPIO.LOW)
                     time.sleep(z3Timer)
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
@@ -224,7 +231,8 @@ def pir4Thread():
                     z4PreTrig = True
                     z4Img = tk.PhotoImage(file=z4Trig)
                     z4Btn.config(image=z4Img)
-                    GPIO.output(26, GPIO.LOW)
+                    if dark:
+                        GPIO.output(26, GPIO.LOW)
                     time.sleep(z4Timer)
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
@@ -233,7 +241,8 @@ def pir4Thread():
                         pass
                 else:
                     z4PreTrig = True
-                    GPIO.output(26, GPIO.LOW)
+                    if dark:
+                        GPIO.output(26, GPIO.LOW)
                     time.sleep(z4Timer)
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
@@ -265,6 +274,10 @@ def showTime():
     timeNow = getCurrTimeDate[3]
     currTime.set(timeNow)
     currDate.set(todaysDate)
+    if timeNow == darkOutside:
+        dark = True
+    elif timeNow == lightOutside:
+        dark = False
     if menuScreen == True and (timerSecs - lastTouch) >= 30:
         screenSaver()
     if timeNow == morningTimer:
