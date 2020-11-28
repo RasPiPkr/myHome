@@ -267,16 +267,16 @@ def read_temp(device_file):
 
 
 def showTime():
-    global timerSecs, getTemp, timeNow, lastTouch, menuScreen, morningTimer, bedtimeTimer
+    global timerSecs, getTemp, timeNow, lastTouch, menuScreen, morningTimer, bedtimeTimer, dark
     timerSecs = int(time.time())
     getCurrTimeDate = time.ctime().split()
     todaysDate = getCurrTimeDate[0] + ' ' + getCurrTimeDate[1] + ' ' + getCurrTimeDate[2] + ' ' + getCurrTimeDate[4]
     timeNow = getCurrTimeDate[3]
     currTime.set(timeNow)
     currDate.set(todaysDate)
-    if timeNow == darkOutside:
+    if timeNow == sunset:
         dark = True
-    elif timeNow == lightOutside:
+    elif timeNow == sunrise:
         dark = False
     if menuScreen == True and (timerSecs - lastTouch) >= 30:
         screenSaver()
