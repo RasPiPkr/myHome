@@ -29,8 +29,8 @@ bedtimeTimerTemp = '19.0'
 defaultTemp = '20.0'
 
 # External lights on time
-darkOutside = '16:00:00'
-lightOutside = '07:00:00'
+sunset = '16:00:00'
+sunrise = '07:00:00'
 
 # ZONES
 # ZONE DEFAULT OPTIONS: 0 = off, 1 = auto, 2 = on (This sets the GUI for how it works)
