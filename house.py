@@ -364,7 +364,7 @@ def setTempDown():
 
 def security_menu():
     global dispFrame, menuScreen, lastTouch, secMenu
-    global z1Img, z1Btn, z2Img, z2Btn, z3Img, z3Btn, z4Img, z4Btn, backImg
+    global z1Img, z1Btn, z2Img, z2Btn, z3Img, z3Btn, z4Img, z4Btn, backImg, lastImg
     global eVoiceImg, eVoiceBtn, dVoiceImg, dVoiceBtn, cctvImg, cctvBtn, deckImg, deckBtn
     dispFrame.destroy()
     dispFrame = tk.Frame(root, bg='black')
@@ -391,12 +391,17 @@ def security_menu():
     cctvImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
     cctvBtn = tk.Button(dispFrame, image=cctvImg, bg='black', bd=0, highlightthickness=0,
                          activebackground='black', command=cctvChange)
-    cctvBtn.grid(row=0, column=1, padx=6, sticky='s')
+    cctvBtn.grid(row=0, column=1, padx=6, pady=5, sticky='n')
+
+    lastImg = tk.PhotoImage(file='cctv_last_btn.png')
+    lastBtn = tk.Button(dispFrame, image=lastImg, bg='black', bd=0, highlightthickness=0,
+                          activebackground='black', command=dispImg)
+    lastBtn.grid(row=0, column=1, rowspan=2)
 
     deckImg = tk.PhotoImage(file=deckingBtnsList[deckingDefault])
     deckBtn = tk.Button(dispFrame, image=deckImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=deckChange)
-    deckBtn.grid(row=1, column=1, padx=6, sticky='n')
+    deckBtn.grid(row=1, column=1, padx=6, sticky='s')
 
     if z1Default == 1 and z1PreTrig == True:
         z1Img = tk.PhotoImage(file=z1Trig)
