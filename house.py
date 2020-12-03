@@ -1,4 +1,5 @@
 from my_house_settings import *
+from bs4 import BeautifulSoup
 import RPi.GPIO as GPIO
 from PIL import Image
 import tkinter as tk
@@ -677,6 +678,22 @@ def dispImg():
     cameraLabel.pack(pady=15)
 
 
+def sunScraper():
+    global sunrise, sunset
+    while True:
+        try:
+            url = 'https://www.timeanddate.com/sun/uk/wakefield'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.content, 'lxml')
+            times = soup.find('p', class_='dn-mob')
+            times = times.text[:13]
+            sunrise = times[:5] + ':00'
+            sunset = times[-5:] + ':00'
+            time.sleep(604800)
+        except:
+            pass
+
+
 u = threading.Thread(target=test1Run, args=(device_folder[0] + '/w1_slave',))
 u.start()
 d = threading.Thread(target=test2Run, args=(device_folder[0] + '/w1_slave',))
@@ -691,6 +708,8 @@ pir4 = threading.Thread(target=pir4Thread)
 pir4.start()
 v = threading.Thread(target=voice)
 v.start()
+sun = threading.Thread(target=sunScraper)
+sun.start()
 menuScreen = False
 global dispFrame
 dispFrame = tk.Frame(root)
