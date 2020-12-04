@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from my_house_settings import *
 from bs4 import BeautifulSoup
 import RPi.GPIO as GPIO
@@ -11,6 +12,7 @@ import glob
 import io
 
 
+# Setup the GPIO pins which are defined in the my_house_settings.py file.
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 for i in range(len(relayPins)):
@@ -20,8 +22,11 @@ for i in range(len(pirPins)):
     GPIO.setup(pirPins[i], GPIO.IN, pull_up_down=GPIO.PUD_UP)
     time.sleep(0.2)
 
+# Setup the DS18B20 Temperature Sensor.
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')
+
+# Setup the window and setup some variables.
 root = tk.Tk()
 root.geometry('800x480')
 root.attributes('-fullscreen', True)
@@ -56,7 +61,6 @@ pTemp = []
 for i in t:
     pTemp.append(i)
     pTemp.append(i[:-1] + '5')
-dark = True
 
 
 def read_temp_raw(device_file):
@@ -66,7 +70,20 @@ def read_temp_raw(device_file):
     return lines
 
 
-def test1Run(device_file):
+def read_temp(device_file):
+    lines = read_temp_raw(device_file)
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = read_temp_raw()
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos+2:]
+        temp_c = float(temp_string) / 1000.0
+        temp_f = temp_c * 9.0 / 5.0 + 32.0
+        return temp_c, temp_f
+
+
+def temp1Thread(device_file):
     global heatingDelay
     heatingDelay = int(time.time())
     while True:
@@ -79,21 +96,23 @@ def test1Run(device_file):
                 else:
                     GPIO.output(18, GPIO.HIGH)
             time.sleep(30)
-        except:
+        except Exception as e:
+            logger(e)
             temp1Sensor.set('N/A')
 
 
-def test2Run(device_file):
+def temp2Thread(device_file):
     while True:
         try:
             getTemp = read_temp(device_file)
             temp2Sensor.set('{:.1f}C'.format(getTemp[0]))
             time.sleep(30)
-        except:
+        except Exception as e:
+            logger(e)
             temp2Sensor.set('N/A')
 
 
-def voice():
+def voiceThread():
     device = pychromecast.Chromecast(voice_google)
     device.wait()
     media = device.media_controller
@@ -129,8 +148,8 @@ def pir1Thread():
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
                         z1Btn.config(image=z1Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
                 else:
                     z1PreTrig = True
                     if dark:
@@ -139,8 +158,8 @@ def pir1Thread():
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
                         z1Btn.config(image=z1Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
             else:
                 GPIO.output(6, GPIO.HIGH)
 
@@ -167,8 +186,8 @@ def pir2Thread():
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
                         z2Btn.config(image=z2Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
                 else:
                     z2PreTrig = True
                     if dark:
@@ -177,8 +196,8 @@ def pir2Thread():
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
                         z2Btn.config(image=z2Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
             else:
                 GPIO.output(13, GPIO.HIGH)
 
@@ -205,8 +224,8 @@ def pir3Thread():
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
                         z3Btn.config(image=z3Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
                 else:
                     z3PreTrig = True
                     if dark:
@@ -215,8 +234,8 @@ def pir3Thread():
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
                         z3Btn.config(image=z3Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
             else:
                 GPIO.output(19, GPIO.HIGH)
 
@@ -238,8 +257,8 @@ def pir4Thread():
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
                         z4Btn.config(image=z4Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
                 else:
                     z4PreTrig = True
                     if dark:
@@ -248,27 +267,14 @@ def pir4Thread():
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
                         z4Btn.config(image=z4Img)
-                    except:
-                        pass
+                    except Exception as e:
+                        logger(e)
             else:
                 GPIO.output(26, GPIO.HIGH)
 
 
-def read_temp(device_file):
-    lines = read_temp_raw(device_file)
-    while lines[0].strip()[-3:] != 'YES':
-        time.sleep(0.2)
-        lines = read_temp_raw()
-    equals_pos = lines[1].find('t=')
-    if equals_pos != -1:
-        temp_string = lines[1][equals_pos+2:]
-        temp_c = float(temp_string) / 1000.0
-        temp_f = temp_c * 9.0 / 5.0 + 32.0
-        return temp_c, temp_f
-
-
 def showTime():
-    global timerSecs, getTemp, timeNow, lastTouch, menuScreen, morningTimer, bedtimeTimer, dark
+    global timerSecs, getTemp, timeNow, todaysDate, lastTouch, menuScreen, morningTimer, bedtimeTimer, dark
     timerSecs = int(time.time())
     getCurrTimeDate = time.ctime().split()
     todaysDate = getCurrTimeDate[0] + ' ' + getCurrTimeDate[1] + ' ' + getCurrTimeDate[2] + ' ' + getCurrTimeDate[4]
@@ -310,35 +316,27 @@ def heating_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = False
-
     backImg = tk.PhotoImage(file='back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=mainMenu)
     backBtn.grid(row=0, column=0, padx=10, pady=5)
-
     plusHourImg = tk.PhotoImage(file='plus_hour_btn.png')
     plusHourBtn = tk.Button(dispFrame, image=plusHourImg, bg='black', bd=0, highlightthickness=0, activebackground='black')
     plusHourBtn.grid(row=1, column=0, padx=10)
-
     progImg = tk.PhotoImage(file='prog_btn.png')
     progBtn = tk.Button(dispFrame, image=progImg, bg='black', bd=0, highlightthickness=0, activebackground='black',
                         command=prog_menu)
     progBtn.grid(row=2, column=0, padx=10, pady=5)
-
     upTemp = tk.Label(dispFrame, textvariable=temp1Sensor, fg='grey', bg='black', font=digitFont)
     upTemp.grid(row=0, column=1, columnspan=3)
-
     setTemp = tk.Label(dispFrame, textvariable=setTempVar, fg='grey', bg='black', font=setFont)
     setTemp.grid(row=0, column=1, rowspan=3, columnspan=3)
-
     dnTemp = tk.Label(dispFrame, textvariable=temp2Sensor, fg='grey', bg='black', font=digitFont)
     dnTemp.grid(row=2, column=1, columnspan=3)
-
     plusTempImg = tk.PhotoImage(file='plus_temp_btn.png')
     plusTempBtn = tk.Button(dispFrame, image=plusTempImg, bg='black', bd=0, highlightthickness=0,
                             activebackground='black', command=setTempUp)
     plusTempBtn.grid(row=0, column=4, rowspan=2, padx=10, pady=5, sticky='n')
-
     minusTempImg = tk.PhotoImage(file='minus_temp_btn.png')
     minusTempBtn = tk.Button(dispFrame, image=minusTempImg, bg='black', bd=0, highlightthickness=0,
                              activebackground='black', command=setTempDown)
@@ -373,37 +371,30 @@ def security_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = True
-
     backImg = tk.PhotoImage(file='round_back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=mainMenu)
     backBtn.grid(row=0, column=0, sticky='n', padx=6, pady=5)
-
     eVoiceImg = tk.PhotoImage(file=extVoiceBtnsList[extVoiceDefault])
     eVoiceBtn = tk.Button(dispFrame, image=eVoiceImg, bg='black', bd=0, highlightthickness=0,
-                          activebackground='black', command=eVoiceChange)
+                          activebackground='black', command=extVoiceChange)
     eVoiceBtn.grid(row=0, column=0, rowspan=2)
-
     dVoiceImg = tk.PhotoImage(file=doorsBtnsList[doorsDefault])
     dVoiceBtn = tk.Button(dispFrame, image=dVoiceImg, bg='black', bd=0, highlightthickness=0,
-                          activebackground='black', command=dVoiceChange)
+                          activebackground='black', command=doorsVoiceChange)
     dVoiceBtn.grid(row=1, column=0, sticky='s')
-
     cctvImg = tk.PhotoImage(file=cctvBtnsList[cctvDefault])
     cctvBtn = tk.Button(dispFrame, image=cctvImg, bg='black', bd=0, highlightthickness=0,
                          activebackground='black', command=cctvChange)
     cctvBtn.grid(row=0, column=1, padx=6, pady=5, sticky='n')
-
     lastImg = tk.PhotoImage(file='cctv_last_btn.png')
     lastBtn = tk.Button(dispFrame, image=lastImg, bg='black', bd=0, highlightthickness=0,
                           activebackground='black', command=dispImg)
     lastBtn.grid(row=0, column=1, rowspan=2)
-
     deckImg = tk.PhotoImage(file=deckingBtnsList[deckingDefault])
     deckBtn = tk.Button(dispFrame, image=deckImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=deckChange)
     deckBtn.grid(row=1, column=1, padx=6, sticky='s')
-
     if z1Default == 1 and z1PreTrig == True:
         z1Img = tk.PhotoImage(file=z1Trig)
     elif z1Default == 1 and z1PreTrig == False:
@@ -413,7 +404,6 @@ def security_menu():
     z1Btn = tk.Button(dispFrame, image=z1Img, bg='black', bd=0, highlightthickness=0,
                       activebackground='black', command=z1Change)
     z1Btn.grid(row=0, column=2, padx=6, pady=5)
-
     if z3Default == 1 and z3PreTrig == True:
         z3Img = tk.PhotoImage(file=z3Trig)
     elif z3Default == 1 and z3PreTrig == False:
@@ -423,7 +413,6 @@ def security_menu():
     z3Btn = tk.Button(dispFrame, image=z3Img, bg='black', bd=0, highlightthickness=0,
                       activebackground='black', command=z3Change)
     z3Btn.grid(row=1, column=2, padx=6)
-
     if z2Default == 1 and z2PreTrig == True:
         z2Img = tk.PhotoImage(file=z2Trig)
     elif z2Default == 1 and z2PreTrig == False:
@@ -433,7 +422,6 @@ def security_menu():
     z2Btn = tk.Button(dispFrame, image=z2Img, bg='black', bd=0, highlightthickness=0,
                       activebackground='black', command=z2Change)
     z2Btn.grid(row=0, column=3, pady=5)
-
     if z4Default == 1 and z4PreTrig == True:
         z4Img = tk.PhotoImage(file=z4Trig)
     elif z4Default == 1 and z4PreTrig == False:
@@ -513,7 +501,7 @@ def z4Change():
         GPIO.output(26, GPIO.LOW)
 
 
-def eVoiceChange():
+def extVoiceChange():
     global extVoiceDefault, eVoiceImg, eVoiceBtn
     global lastTouch
     lastTouch = int(time.time())
@@ -524,7 +512,7 @@ def eVoiceChange():
     eVoiceBtn.config(image=eVoiceImg)
 
 
-def dVoiceChange():
+def doorsVoiceChange():
     global doorsDefault, dVoiceImg, dVoiceBtn
     global lastTouch
     lastTouch = int(time.time())
@@ -570,12 +558,10 @@ def mainMenu():
     lastTouch = int(time.time())
     spare = tk.Label(dispFrame, bg='black', width=1)
     spare.grid(row=0, column=0)
-
     htgImg = tk.PhotoImage(file='heating_btn.png')
     htgBtn = tk.Button(dispFrame, image=htgImg, bg='black', bd=0, highlightthickness=0,
                        activebackground='black', command=heating_menu)
     htgBtn.grid(row=0, column=1, padx=15, pady=60)
-
     secImg = tk.PhotoImage(file='security_btn.png')
     secBtn = tk.Button(dispFrame, image=secImg, bg='black', bd=0, highlightthickness=0,
                        activebackground='black', command=security_menu)
@@ -605,24 +591,18 @@ def prog_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = False
-
     backImg = tk.PhotoImage(file='back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=get_prog_timer)
     backBtn.grid(row=0, column=0, padx=10, pady=5)
-
     tk.Label(dispFrame, text='', bg='black', width=4).grid(row=0, column=1)
-
     morningImg = tk.PhotoImage(file='morning.png')
     morningLabel = tk.Label(dispFrame, image=morningImg, bg='black')
     morningLabel.grid(row=0, column=2)
-
     tk.Label(dispFrame, text='', bg='black', width=18).grid(row=0, column=3)
     tk.Label(dispFrame, text='', bg='black', width=2).grid(row=0, column=4)
-
     mFrame = tk.Frame(dispFrame, bg='black')
     mFrame.grid(row=1, column=0, columnspan=5)
-
     mHrsBox = tk.Spinbox(mFrame, textvariable=mHrsVar, values=pHrs, font=digitFont, width=2)
     mHrsBox.pack(side='left')
     mHrsVar.set(mDefaultHrs)
@@ -634,17 +614,13 @@ def prog_menu():
     mTempBox = tk.Spinbox(mFrame, textvariable=mTempVar, values=pTemp, font=digitFont, width=4)
     mTempBox.pack(side='left')
     mTempVar.set(mDefaultTemp)
-
     bedtimeImg = tk.PhotoImage(file='bedtime.png')
     bedtimeLabel = tk.Label(dispFrame, image=bedtimeImg, bg='black')
     bedtimeLabel.grid(row=2, column=2, pady=25)
-
     tk.Label(dispFrame, text='', bg='black', width=18).grid(row=0, column=3)
     tk.Label(dispFrame, text='', bg='black', width=2).grid(row=0, column=4)
-
     bFrame = tk.Frame(dispFrame, bg='black')
     bFrame.grid(row=3, column=0, columnspan=5)
-
     bHrsBox = tk.Spinbox(bFrame, textvariable=bHrsVar, values=pHrs, font=digitFont, width=2)
     bHrsBox.pack(side='left')
     bHrsVar.set(bDefaultHrs)
@@ -659,10 +635,13 @@ def prog_menu():
 
 
 def grabImg(cam):
-    capture = requests.get('http://{}:{}@{}:{}/ISAPI/Streaming/channels/{}/picture?videoResolutionWidth=1920&videoResolutionHeight=1080'.format(user, passwd, camIP, httpPort, cam))
-    img = Image.open(io.BytesIO(capture.content))
-    newImg = img.resize((800, 450))
-    newImg.save('cctv.png')
+    try:
+        capture = requests.get('http://{}:{}@{}:{}/ISAPI/Streaming/channels/{}/picture?videoResolutionWidth=1920&videoResolutionHeight=1080'.format(user, passwd, camIP, httpPort, cam))
+        img = Image.open(io.BytesIO(capture.content))
+        newImg = img.resize((800, 450))
+        newImg.save('cctv.png')
+    except Exception as e:
+        logger(e)
 
 
 def dispImg():
@@ -673,9 +652,12 @@ def dispImg():
     menuScreen = True
     lastTouch = int(time.time() + 90)
     secMenu = False
-    cameraImg = tk.PhotoImage(file='cctv.png')
-    cameraLabel = tk.Button(dispFrame, image=cameraImg, bd=0, highlightthickness=0, command=mainMenu)
-    cameraLabel.pack(pady=15)
+    try:
+        cameraImg = tk.PhotoImage(file='cctv.png')
+        cameraLabel = tk.Button(dispFrame, image=cameraImg, bd=0, highlightthickness=0, command=mainMenu)
+        cameraLabel.pack(pady=15)
+    except Exception as e:
+        logger(e)
 
 
 def sunScraper():
@@ -690,14 +672,19 @@ def sunScraper():
             sunrise = times[:5] + ':00'
             sunset = times[-5:] + ':00'
             time.sleep(604800)
-        except:
-            pass
+        except Exception as e:
+            logger(e)
 
 
-u = threading.Thread(target=test1Run, args=(device_folder[0] + '/w1_slave',))
-u.start()
-d = threading.Thread(target=test2Run, args=(device_folder[0] + '/w1_slave',))
-d.start()
+def logger(log):
+    with open('log.txt', 'a+') as f:
+        f.write(todaysDate + ' ' + timeNow + ' ' + log + '\n')
+
+
+t1 = threading.Thread(target=temp1Thread, args=(device_folder[0] + '/w1_slave',))
+t1.start()
+t2 = threading.Thread(target=temp2Thread, args=(device_folder[0] + '/w1_slave',))
+t2.start()
 pir1 = threading.Thread(target=pir1Thread)
 pir1.start()
 pir2 = threading.Thread(target=pir2Thread)
@@ -706,7 +693,7 @@ pir3 = threading.Thread(target=pir3Thread)
 pir3.start()
 pir4 = threading.Thread(target=pir4Thread)
 pir4.start()
-v = threading.Thread(target=voice)
+v = threading.Thread(target=voiceThread)
 v.start()
 sun = threading.Thread(target=sunScraper)
 sun.start()
