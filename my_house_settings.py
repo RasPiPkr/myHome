@@ -31,6 +31,7 @@ defaultTemp = '20.0'
 # External lights on time
 sunset = '16:00:00'
 sunrise = '07:00:00'
+dark = True
 
 # ZONES
 # ZONE DEFAULT OPTIONS: 0 = off, 1 = auto, 2 = on (This sets the GUI for how it works)
