@@ -148,8 +148,8 @@ def pir1Thread():
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
                         z1Btn.config(image=z1Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
                 else:
                     z1PreTrig = True
                     if dark:
@@ -158,8 +158,8 @@ def pir1Thread():
                     try:
                         z1Img = tk.PhotoImage(file=z1BtnsList[z1Default])
                         z1Btn.config(image=z1Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
             else:
                 GPIO.output(6, GPIO.HIGH)
 
@@ -186,8 +186,8 @@ def pir2Thread():
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
                         z2Btn.config(image=z2Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
                 else:
                     z2PreTrig = True
                     if dark:
@@ -196,8 +196,8 @@ def pir2Thread():
                     try:
                         z2Img = tk.PhotoImage(file=z2BtnsList[z2Default])
                         z2Btn.config(image=z2Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
             else:
                 GPIO.output(13, GPIO.HIGH)
 
@@ -224,8 +224,8 @@ def pir3Thread():
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
                         z3Btn.config(image=z3Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
                 else:
                     z3PreTrig = True
                     if dark:
@@ -234,8 +234,8 @@ def pir3Thread():
                     try:
                         z3Img = tk.PhotoImage(file=z3BtnsList[z3Default])
                         z3Btn.config(image=z3Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
             else:
                 GPIO.output(19, GPIO.HIGH)
 
@@ -257,8 +257,8 @@ def pir4Thread():
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
                         z4Btn.config(image=z4Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
                 else:
                     z4PreTrig = True
                     if dark:
@@ -267,8 +267,8 @@ def pir4Thread():
                     try:
                         z4Img = tk.PhotoImage(file=z4BtnsList[z4Default])
                         z4Btn.config(image=z4Img)
-                    except Exception as e:
-                        logger(e)
+                    except:
+                        pass
             else:
                 GPIO.output(26, GPIO.HIGH)
 
@@ -288,9 +288,9 @@ def showTime():
     if menuScreen == True and (timerSecs - lastTouch) >= 30:
         screenSaver()
     if timeNow == morningTimer:
-        setTempVar.set('20.0')
+        setTempVar.set(morningTimerTemp)
     elif timeNow == bedtimeTimer:
-        setTempVar.set('19.0')
+        setTempVar.set(bedtimeTimerTemp)
     root.after(1000, showTime)
 
 
@@ -569,7 +569,7 @@ def mainMenu():
 
 
 def get_prog_timer():
-    global morningTimer, morningTemp, bedtimeTimer, bedtimeTemp
+    global morningTimer, morningTimerTemp, bedtimeTimer, bedtimeTimerTemp
     global mDefaultHrs, mDefaultMins, mDefaultTemp, bDefaultHrs, bDefaultMins, bDefaultTemp
     morningTimer = '{}:{}:00'.format(str(mHrsVar.get()), str(mMinsVar.get()))
     mDefaultHrs = str(mHrsVar.get())
@@ -579,6 +579,10 @@ def get_prog_timer():
     bDefaultMins = str(bMinsVar.get())
     mDefaultTemp = str(mTempVar.get())
     bDefaultTemp = str(bTempVar.get())
+    morningTimerTemp = mDefaultTemp
+    bedtimeTimerTemp = bDefaultTemp
+    newTimer = morningTimerTemp + '@' + morningTimer + '--' + bedtimeTimerTemp + '@' + bedtimeTimer
+    logger(newTimer)
     heating_menu()
 
 
@@ -671,6 +675,8 @@ def sunScraper():
             times = times.text[:13]
             sunrise = times[:5] + ':00'
             sunset = times[-5:] + ':00'
+            sunTimes = 'sunrise=' + sunrise + '--sunset=' + sunset
+            logger(sunTimes)
             time.sleep(604800)
         except Exception as e:
             logger(e)
