@@ -640,7 +640,7 @@ def prog_menu():
 
 def grabImg(cam):
     try:
-        capture = requests.get('http://{}:{}@{}:{}/ISAPI/Streaming/channels/{}/picture?videoResolutionWidth=1920&videoResolutionHeight=1080'.format(user, passwd, camIP, httpPort, cam))
+        capture = requests.get(cctvURL)
         img = Image.open(io.BytesIO(capture.content))
         newImg = img.resize((800, 450))
         newImg.save('cctv.png')
