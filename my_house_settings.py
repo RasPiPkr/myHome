@@ -34,43 +34,41 @@ dark = True
 
 # ZONES
 # ZONE DEFAULT OPTIONS: 0 = off, 1 = auto, 2 = on (This sets the GUI for how it works)
-z1BtnsList = ['z1_off_btn.png', 'z1_auto_btn.png', 'z1_on_btn.png']
+z1BtnsList = ['imgs/z1_off_btn.png', 'imgs/z1_auto_btn.png', 'imgs/z1_on_btn.png']
 z1Default = 1
 z1Timer = 120 # Seconds
-z1Trig = 'z1_trig_btn.png'
+z1Trig = 'imgs/z1_trig_btn.png'
 
-z2BtnsList = ['z2_off_btn.png', 'z2_auto_btn.png', 'z2_on_btn.png']
+z2BtnsList = ['imgs/z2_off_btn.png', 'imgs/z2_auto_btn.png', 'imgs/z2_on_btn.png']
 z2Default = 1
 z2Timer = 120 # Seconds
-z2Trig = 'z2_trig_btn.png'
+z2Trig = 'imgs/z2_trig_btn.png'
 
-z3BtnsList = ['z3_off_btn.png', 'z3_auto_btn.png', 'z3_on_btn.png']
+z3BtnsList = ['imgs/z3_off_btn.png', 'imgs/z3_auto_btn.png', 'imgs/z3_on_btn.png']
 z3Default = 1
 z3Timer = 120 # Seconds
-z3Trig = 'z3_trig_btn.png'
+z3Trig = 'imgs/z3_trig_btn.png'
 
-z4BtnsList = ['z4_off_btn.png', 'z4_auto_btn.png', 'z4_on_btn.png']
+z4BtnsList = ['imgs/z4_off_btn.png', 'imgs/z4_auto_btn.png', 'imgs/z4_on_btn.png']
 z4Default = 1
 z4Timer = 120 # Seconds
-z4Trig = 'z4_trig_btn.png'
+z4Trig = 'imgs/z4_trig_btn.png'
 
 
 # OPTIONS
 # DEFAULT OPTIONS: 0 = off, 1 = on
 # Ext voice buttons list
-extVoiceBtnsList = ['ext_voice_off_btn.png', 'ext_voice_on_btn.png']
+extVoiceBtnsList = ['imgs/ext_voice_off_btn.png', 'imgs/ext_voice_on_btn.png']
 extVoiceDefault = 0
 
 # Doors voice buttons list
-doorsBtnsList = ['doors_voice_off_btn.png', 'doors_voice_on_btn.png']
+doorsBtnsList = ['imgs/doors_voice_off_btn.png', 'imgs/doors_voice_on_btn.png']
 doorsDefault = 0
 
 # CCTV buttons list
-cctvBtnsList = ['cctv_off_btn.png', 'cctv_on_btn.png']
+cctvBtnsList = ['imgs/cctv_off_btn.png', 'imgs/cctv_on_btn.png']
 cctvDefault = 0
 
 # Decking buttons list
-deckingBtnsList = ['decking_off_btn.png', 'decking_on_btn.png']
+deckingBtnsList = ['imgs/decking_off_btn.png', 'imgs/decking_on_btn.png']
 deckingDefault = 0
-
-
