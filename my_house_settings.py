@@ -13,9 +13,6 @@ httpPort = '' # In the string enter your http port setup that is set in your cct
 cam1 = '101' # Dependng on your cctv system for how many cameras or how the web request is required to view said camera
 cam2 = '201' # Replace these values, I have left them in as these worked with my cctv system
 cam3 = '301' # For my system the first digit refers to the camera and the 01 being the main stream 02 being substream, main stream is for best quality
-# Set the url to view your cctv below, use placeholders for entering user, password etc. that you entered above
-cctvURL = ''
-
 
 # Google voice announcements
 dialog = [] # Put links to a host for a recorded mp3, I used dropbox for mine
