@@ -316,14 +316,14 @@ def heating_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = False
-    backImg = tk.PhotoImage(file='imgs/back_btn.png')
+    backImg = tk.PhotoImage(file='back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=mainMenu)
     backBtn.grid(row=0, column=0, padx=10, pady=5)
-    plusHourImg = tk.PhotoImage(file='imgs/plus_hour_btn.png')
+    plusHourImg = tk.PhotoImage(file='plus_hour_btn.png')
     plusHourBtn = tk.Button(dispFrame, image=plusHourImg, bg='black', bd=0, highlightthickness=0, activebackground='black')
     plusHourBtn.grid(row=1, column=0, padx=10)
-    progImg = tk.PhotoImage(file='imgs/prog_btn.png')
+    progImg = tk.PhotoImage(file='prog_btn.png')
     progBtn = tk.Button(dispFrame, image=progImg, bg='black', bd=0, highlightthickness=0, activebackground='black',
                         command=prog_menu)
     progBtn.grid(row=2, column=0, padx=10, pady=5)
@@ -333,11 +333,11 @@ def heating_menu():
     setTemp.grid(row=0, column=1, rowspan=3, columnspan=3)
     dnTemp = tk.Label(dispFrame, textvariable=temp2Sensor, fg='grey', bg='black', font=digitFont)
     dnTemp.grid(row=2, column=1, columnspan=3)
-    plusTempImg = tk.PhotoImage(file='imgs/plus_temp_btn.png')
+    plusTempImg = tk.PhotoImage(file='plus_temp_btn.png')
     plusTempBtn = tk.Button(dispFrame, image=plusTempImg, bg='black', bd=0, highlightthickness=0,
                             activebackground='black', command=setTempUp)
     plusTempBtn.grid(row=0, column=4, rowspan=2, padx=10, pady=5, sticky='n')
-    minusTempImg = tk.PhotoImage(file='imgs/minus_temp_btn.png')
+    minusTempImg = tk.PhotoImage(file='minus_temp_btn.png')
     minusTempBtn = tk.Button(dispFrame, image=minusTempImg, bg='black', bd=0, highlightthickness=0,
                              activebackground='black', command=setTempDown)
     minusTempBtn.grid(row=1, column=4, rowspan=2, padx=10, pady=5, sticky='s')
@@ -371,7 +371,7 @@ def security_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = True
-    backImg = tk.PhotoImage(file='imgs/round_back_btn.png')
+    backImg = tk.PhotoImage(file='round_back_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=mainMenu)
     backBtn.grid(row=0, column=0, sticky='n', padx=6, pady=5)
@@ -387,7 +387,7 @@ def security_menu():
     cctvBtn = tk.Button(dispFrame, image=cctvImg, bg='black', bd=0, highlightthickness=0,
                          activebackground='black', command=cctvChange)
     cctvBtn.grid(row=0, column=1, padx=6, pady=5, sticky='n')
-    lastImg = tk.PhotoImage(file='imgs/cctv_last_btn.png')
+    lastImg = tk.PhotoImage(file='cctv_last_btn.png')
     lastBtn = tk.Button(dispFrame, image=lastImg, bg='black', bd=0, highlightthickness=0,
                           activebackground='black', command=dispImg)
     lastBtn.grid(row=0, column=1, rowspan=2)
@@ -558,11 +558,11 @@ def mainMenu():
     lastTouch = int(time.time())
     spare = tk.Label(dispFrame, bg='black', width=1)
     spare.grid(row=0, column=0)
-    htgImg = tk.PhotoImage(file='imgs/heating_btn.png')
+    htgImg = tk.PhotoImage(file='heating_btn.png')
     htgBtn = tk.Button(dispFrame, image=htgImg, bg='black', bd=0, highlightthickness=0,
                        activebackground='black', command=heating_menu)
     htgBtn.grid(row=0, column=1, padx=15, pady=60)
-    secImg = tk.PhotoImage(file='imgs/security_btn.png')
+    secImg = tk.PhotoImage(file='security_btn.png')
     secBtn = tk.Button(dispFrame, image=secImg, bg='black', bd=0, highlightthickness=0,
                        activebackground='black', command=security_menu)
     secBtn.grid(row=0, column=2, padx=15, pady=60)
@@ -595,12 +595,12 @@ def prog_menu():
     menuScreen = True
     lastTouch = int(time.time())
     secMenu = False
-    backImg = tk.PhotoImage(file='imgs/back_btn.png')
+    backImg = tk.PhotoImage(file='save_btn.png')
     backBtn = tk.Button(dispFrame, image=backImg, bg='black', bd=0, highlightthickness=0,
                         activebackground='black', command=get_prog_timer)
     backBtn.grid(row=0, column=0, padx=10, pady=5)
     tk.Label(dispFrame, text='', bg='black', width=4).grid(row=0, column=1)
-    morningImg = tk.PhotoImage(file='imgs/morning.png')
+    morningImg = tk.PhotoImage(file='morning.png')
     morningLabel = tk.Label(dispFrame, image=morningImg, bg='black')
     morningLabel.grid(row=0, column=2)
     tk.Label(dispFrame, text='', bg='black', width=18).grid(row=0, column=3)
@@ -618,7 +618,7 @@ def prog_menu():
     mTempBox = tk.Spinbox(mFrame, textvariable=mTempVar, values=pTemp, font=digitFont, width=4)
     mTempBox.pack(side='left')
     mTempVar.set(mDefaultTemp)
-    bedtimeImg = tk.PhotoImage(file='imgs/bedtime.png')
+    bedtimeImg = tk.PhotoImage(file='bedtime.png')
     bedtimeLabel = tk.Label(dispFrame, image=bedtimeImg, bg='black')
     bedtimeLabel.grid(row=2, column=2, pady=25)
     tk.Label(dispFrame, text='', bg='black', width=18).grid(row=0, column=3)
