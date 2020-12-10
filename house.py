@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 from my_house_settings import *
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup # used in sunScraper function on line 673 for security lighting if dark outside or not.
 import RPi.GPIO as GPIO
-from PIL import Image
+from PIL import Image # used in grabImg function on line 644 for resizing CCTV camera image to fit on screen.
 import tkinter as tk
-import pychromecast
+import pychromecast # used in voiceThread function on line 116 for voice announcement via Google Home device.
 import threading
 import requests
 import time
@@ -687,10 +687,12 @@ def logger(log):
         f.write(todaysDate + ' ' + timeNow + ' ' + log + '\n')
 
 
+# Temp sensor threads
 t1 = threading.Thread(target=temp1Thread, args=(device_folder[0] + '/w1_slave',))
 t1.start()
 t2 = threading.Thread(target=temp2Thread, args=(device_folder[0] + '/w1_slave',))
 t2.start()
+# PIR threads
 pir1 = threading.Thread(target=pir1Thread)
 pir1.start()
 pir2 = threading.Thread(target=pir2Thread)
@@ -699,8 +701,10 @@ pir3 = threading.Thread(target=pir3Thread)
 pir3.start()
 pir4 = threading.Thread(target=pir4Thread)
 pir4.start()
+# Voice announcement threads
 v = threading.Thread(target=voiceThread)
 v.start()
+# Web scraper thread
 sun = threading.Thread(target=sunScraper)
 sun.start()
 menuScreen = False
